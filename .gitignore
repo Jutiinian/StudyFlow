@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Local database
+*.db
+*.db-*
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Local configuration
+.env
+.DS_Store
+
+# Backup Frontend
+frontend-js-backup/
