@@ -10,4 +10,4 @@ def health_check():
 
 
 
-# Starting backend: python -m uvicorn api:app --reload --port 8001
+# Starting backend: python3 -m uvicorn api:app --reload --port 8001
