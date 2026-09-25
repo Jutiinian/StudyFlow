@@ -10,9 +10,10 @@ class Task:
 	confidence: int # Confidence level from 1 - 5 regarding task
 
 def days_until_due(task: Task, today_date: date) -> int:
-	# date - date returns timedelta, .days attribute gives integers
+	# date - date returns time delta, .days attribute gives integers
 	return (task.due - today_date).days
 
+# Using deadline groups because it's to help confidence matter when deadlines are close together
 def deadline_group(task: Task, today_date: date) -> int:
 	deadline_length = days_until_due(task, today_date)
 
@@ -30,3 +31,9 @@ def deadline_group(task: Task, today_date: date) -> int:
 # Lower values come first -> more urgent deadlines, lower confidence with same group, earlier due dates when both group and confidence match
 def task_priority(task: Task, today_date: date) -> tuple[int, int, date]:
 	return (deadline_group(task, today_date), task.confidence, task.due)
+
+def prioritize_tasks(tasks: list[Task], today_date: date) -> list[Task]:
+	# key=lambda is a way to make a quick anonymous function in a single line
+	# in this case, sort tasks by tuple that is returned task_priority
+	filtered_tasks = [task for task in tasks if task.remaining > 0]
+	return sorted(filtered_tasks, key=lambda task: task_priority(task, today_date))
