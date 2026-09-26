@@ -1,5 +1,6 @@
 import type { PlanResponse, TaskCreate, TaskOut, TaskUpdate } from "../types/models";
 
+// Function will never return normally, always throws
 async function throwForBadResponse(response: Response): Promise<never> {
 	let detail: string;
 
