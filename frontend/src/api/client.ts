@@ -1,9 +1,22 @@
 import type { PlanResponse, TaskCreate, TaskOut, TaskUpdate } from "../types/models";
 
+async function throwForBadResponse(response: Response): Promise<never> {
+	let detail: string;
+
+	try {
+		const body = await response.json();
+		detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+	} catch {
+		detail = response.statusText;
+	}
+
+	throw new Error(`Request failed (${response.status}): ${detail}`);
+}
+
 export async function getTasks(): Promise<TaskOut[]> {
 	const response = await fetch("/api/tasks");
 	if (!response.ok) {
-		throw new Error("...");
+		await throwForBadResponse(response);
 	}
 	return (await response.json()) as TaskOut[];
 }
@@ -16,7 +29,7 @@ export async function createTask(task: TaskCreate): Promise<TaskOut> {
 	});
 
 	if (!response.ok) {
-		throw new Error("...");
+		await throwForBadResponse(response);
 	}
 
 	return (await response.json()) as TaskOut;
@@ -30,7 +43,7 @@ export async function updateTask(id: number, update: TaskUpdate): Promise<TaskOu
 	});
 
 	if (!response.ok) {
-		throw new Error("...");
+		await throwForBadResponse(response);
 	}
 
 	return (await response.json()) as TaskOut;
@@ -44,7 +57,7 @@ export async function generatePlan(availableMinutes: number): Promise<PlanRespon
 	});
 
 	if (!response.ok) {
-		throw new Error("...");
+		await throwForBadResponse(response);
 	}
 
 	return (await response.json()) as PlanResponse;
