@@ -59,20 +59,41 @@ def allocate_first_block(tasks: list[Task], today_date: date, available_minutes:
 def allocate_round(tasks: list[Task], today_date: date, available_minutes: int) -> list[StudyBlock]:
 	prioritized_tasks: list[Task] = prioritize_tasks(tasks, today_date)
 
+	# SNapshot of "how much is left" per task
+	# keyed by identity for now
+	remaining_this_session: dict[int, int] = {
+		id(task): task.remaining for task in prioritized_tasks
+	}
+
 	result: list[StudyBlock] = []
-	for i in range(0, len(prioritized_tasks)):
-		if available_minutes <= 0:
-			break
+	time_left = available_minutes
 
-		task = prioritized_tasks[i]
-		block_duration = min(available_minutes, task.remaining, 25)
+	while time_left > 0:
+		made_progress = False
 
-		result.append(StudyBlock(
-			title=task.title,
-			minutes=block_duration,
-			explanation=f"Time needed because due at {task.due} and confidence of {task.confidence}"
-		))
+		for task in prioritized_tasks:
+			if time_left <= 0:
+				break
 
-		available_minutes -= block_duration
+			task_remaining = remaining_this_session[id(task)]
+			if task_remaining <= 0:
+				continue # task already done, skip it
+
+			block_duration = min(25, task_remaining, time_left)
+			if block_duration <= 0:
+				continue
+
+			result.append(StudyBlock(
+				title=task.title,
+				minutes=block_duration,
+				explanation=f"Time needed because due at {task.due} and confidence of {task.confidence}"
+			))
+
+			remaining_this_session[id(task)] -= block_duration
+			time_left -= block_duration
+			made_progress = True
+
+		if not made_progress:
+			break # nothing could take a block this round, so used to stop from infinte loop
 
 	return result
