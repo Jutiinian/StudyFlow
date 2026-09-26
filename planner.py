@@ -57,7 +57,7 @@ def allocate_first_block(tasks: list[Task], today_date: date, available_minutes:
 		explanation=f"Time needed because due at {first_task.due} and confidence of {first_task.confidence}"
 	)
 
-def allocate_round(tasks: list[Task], today_date: date, available_minutes: int) -> list[StudyBlock]:
+def allocate_plan(tasks: list[Task], today_date: date, available_minutes: int) -> list[StudyBlock]:
 	prioritized_tasks: list[Task] = prioritize_tasks(tasks, today_date)
 
 	# SNapshot of "how much is left" per task
