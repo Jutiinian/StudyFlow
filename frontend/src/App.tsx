@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TaskOut } from "./types/models";
 import { getTasks } from "./api/client";
 import TaskList from "./components/TaskList";
+import TaskForm from "./components/TaskForm";
 
 type HealthResponse = {
 	status: string;
@@ -33,6 +34,11 @@ export default function App() {
 		}
 	}
 
+	function handleTaskCreated(task: TaskOut) {
+		// Make a new array, unpack all the elements in prev and add task into a new array
+		setTasks((prev) => [...prev, task])
+	}
+
 	useEffect(() => {
 		async function loadTasks() {
 			const data = await getTasks()
@@ -60,6 +66,7 @@ export default function App() {
 			<p role="status">{status}</p>
 
 			<TaskList tasks={tasks}></TaskList>
+			<TaskForm onTaskCreated={handleTaskCreated}/>
 		</main>
 	)
 }
