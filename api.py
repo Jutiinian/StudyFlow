@@ -96,7 +96,7 @@ def row_to_task_out(row: tuple) -> TaskOut:
         confidence=row[4],
 	)
 
-@app.post("/api/tasks", response_model=list[TaskOut])
+@app.post("/api/tasks", response_model=TaskOut)
 def create_task_endpoint(task: TaskCreate) -> TaskOut:
 	new_id = create_task(
 		title=task.title,
@@ -107,7 +107,12 @@ def create_task_endpoint(task: TaskCreate) -> TaskOut:
 
 	return TaskOut(id=new_id, title=task.title, due=task.due, remaining=task.remaining, confidence=task.confidence)
 
-@app.get("/api/tasks", response_model=TaskOut)
+@app.get("/api/tasks", response_model=list[TaskOut])
+def list_tasks_endpoint() -> list[TaskOut]:
+    rows = get_all_tasks()
+    return [row_to_task_out(row) for row in rows]
+
+@app.patch("/api/tasks/{task_id}", response_model=TaskOut)
 def update_task_endpoint(task_id: int, task: TaskUpdate) -> TaskOut:
 	updated = update_task(task_id, task.remaining, task.confidence)
 	if not updated:
