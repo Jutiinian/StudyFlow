@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from planner import Task, days_until_due, deadline_group, task_priority, prioritize_tasks
+from planner import Task, StudyBlock, days_until_due, deadline_group, task_priority, prioritize_tasks
 
 today_date = date.today()
 
@@ -34,7 +34,7 @@ taskA: Task = Task(
 taskB: Task = Task(
 	title="Task B",
 	due=date(2026, 9, 26),
-	remaining=30,
+	remaining=10,
 	confidence=1,
 )
 
@@ -58,3 +58,29 @@ testList: list[Task] = [taskA, taskB, taskC, Task(
 sorted_test_list = prioritize_tasks(testList, today_date)
 
 print(sorted_test_list)
+
+block_length = min(30, sorted_test_list[0].remaining, 25)
+block_length2 = min(20, sorted_test_list[1].remaining, 25)
+block_length3 = min(40, sorted_test_list[2].remaining, 25)
+
+new_block = StudyBlock(
+	title=sorted_test_list[0].title,
+	minutes=block_length,
+	explanation=f"TIme needed because due at {sorted_test_list[0].due} and confidence of {sorted_test_list[0].confidence}"
+)
+
+new_block2 = StudyBlock(
+	title=sorted_test_list[1].title,
+	minutes=block_length2,
+	explanation=f"TIme needed because due at {sorted_test_list[1].due} and confidence of {sorted_test_list[1].confidence}"
+)
+
+new_block3 = StudyBlock(
+	title=sorted_test_list[2].title,
+	minutes=block_length3,
+	explanation=f"TIme needed because due at {sorted_test_list[2].due} and confidence of {sorted_test_list[2].confidence}"
+)
+
+print(new_block)
+print(new_block2)
+print(new_block3)

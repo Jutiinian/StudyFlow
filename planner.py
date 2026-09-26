@@ -9,6 +9,12 @@ class Task:
 	remaining: int # How long it would take to finish (estimated)
 	confidence: int # Confidence level from 1 - 5 regarding task
 
+@dataclass
+class StudyBlock:
+	title: str
+	minutes: int
+	explanation: str
+
 def days_until_due(task: Task, today_date: date) -> int:
 	# date - date returns time delta, .days attribute gives integers
 	return (task.due - today_date).days
@@ -37,3 +43,36 @@ def prioritize_tasks(tasks: list[Task], today_date: date) -> list[Task]:
 	# in this case, sort tasks by tuple that is returned task_priority
 	filtered_tasks = [task for task in tasks if task.remaining > 0]
 	return sorted(filtered_tasks, key=lambda task: task_priority(task, today_date))
+
+def allocate_first_block(tasks: list[Task], today_date: date, available_minutes: int) -> StudyBlock | None:
+	prioritized_tasks: list[Task] = prioritize_tasks(tasks, today_date)
+	if len(prioritized_tasks) == 0:
+		return None
+
+	first_task = prioritized_tasks[0]
+	return StudyBlock(
+		title=first_task.title,
+		minutes=min(available_minutes, first_task.remaining, 25),
+		explanation=f"Time needed because due at {first_task.due} and confidence of {first_task.confidence}"
+	)
+
+def allocate_round(tasks: list[Task], today_date: date, available_minutes: int) -> list[StudyBlock]:
+	prioritized_tasks: list[Task] = prioritize_tasks(tasks, today_date)
+
+	result: list[StudyBlock] = []
+	for i in range(0, len(prioritized_tasks)):
+		if available_minutes <= 0:
+			break
+
+		task = prioritized_tasks[i]
+		block_duration = min(available_minutes, task.remaining, 25)
+
+		result.append(StudyBlock(
+			title=task.title,
+			minutes=block_duration,
+			explanation=f"Time needed because due at {task.due} and confidence of {task.confidence}"
+		))
+
+		available_minutes -= block_duration
+
+	return result
