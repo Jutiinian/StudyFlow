@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { TaskOut } from "./types/models";
+import { getTasks } from "./api/client";
+import TaskList from "./components/TaskList";
 
 type HealthResponse = {
 	status: string;
@@ -7,6 +10,8 @@ type HealthResponse = {
 export default function App() {
 	const [status, setStatus] = useState("Unchecked");
 	const [checking, setChecking] = useState(false);
+
+	const [tasks, setTasks] = useState<TaskOut[]>([]);
 
 	async function checkBackend(): Promise<void> {
 		setChecking(true);
@@ -28,10 +33,19 @@ export default function App() {
 		}
 	}
 
+	useEffect(() => {
+		async function loadTasks() {
+			const data = await getTasks()
+			setTasks(data);
+		}
+
+		loadTasks()
+	}, [])
+
 	// Button click
  //    → fetch("/api/health")
  //    → Vite proxy
- //    → FastAPI function
+ //    → FastAPI functions
  //    → JSON response
  //    → React updates the displayed status
 	return (
@@ -44,6 +58,8 @@ export default function App() {
 			</button>
 
 			<p role="status">{status}</p>
+
+			<TaskList tasks={tasks}></TaskList>
 		</main>
 	)
 }
