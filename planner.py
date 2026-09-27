@@ -76,7 +76,7 @@ def allocate_plan(tasks: list[Task], today_date: date, available_minutes: int) -
 			if time_left <= 0:
 				break
 
-			task_remaining = remaining_this_session[id(task)]
+			task_remaining = remaining_this_session[task.id]
 			if task_remaining <= 0:
 				continue # task already done, skip it
 
@@ -90,7 +90,7 @@ def allocate_plan(tasks: list[Task], today_date: date, available_minutes: int) -
 				explanation=f"Time needed because due at {task.due} and confidence of {task.confidence}"
 			))
 
-			remaining_this_session[id(task)] -= block_duration
+			remaining_this_session[task.id] -= block_duration
 			time_left -= block_duration
 			made_progress = True
 
