@@ -48,6 +48,7 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 
 			<input
 				type="number"
+				min={0}
 				value={remaining}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRemaining(Number(e.target.value))}
 				placeholder="Minutes Remaining"
