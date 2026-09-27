@@ -1,72 +1,149 @@
 import { useEffect, useState } from "react";
-import type { TaskOut } from "./types/models";
-import { getTasks } from "./api/client";
-import TaskList from "./components/TaskList";
+import { generatePlan, getTasks } from "./api/client";
+import PlanView from "./components/PlanView";
 import TaskForm from "./components/TaskForm";
-
-type HealthResponse = {
-	status: string;
-}
+import TaskList from "./components/TaskList";
+import type { PlanResponse, TaskOut } from "./types/models";
+import "./App.css";
 
 export default function App() {
-	const [status, setStatus] = useState("Unchecked");
-	const [checking, setChecking] = useState(false);
-
 	const [tasks, setTasks] = useState<TaskOut[]>([]);
+	const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+	const [tasksError, setTasksError] = useState<string | null>(null);
 
-	async function checkBackend(): Promise<void> {
-		setChecking(true);
-		setStatus("Connecting...");
+	const [availableMinutesText, setAvailableMinutesText] = useState("60");
+	const [plan, setPlan] = useState<PlanResponse | null>(null);
+	const [isGenerating, setIsGenerating] = useState(false);
+	const [planError, setPlanError] = useState<string | null>(null);
 
-		try {
-			const response = await fetch("/api/health");
+	useEffect(() => {
+		let ignoreResult = false;
 
-			if (!response.ok) {
-				throw new Error("The server returned an error");
+		async function loadTasks() {
+			try {
+				const data = await getTasks();
+
+				if (!ignoreResult) {
+					setTasks(data);
+				}
+			} catch (error) {
+				if (!ignoreResult) {
+					setTasksError(
+						error instanceof Error ? error.message : "Failed to load tasks",
+					);
+				}
+			} finally {
+				if (!ignoreResult) {
+					setIsLoadingTasks(false);
+				}
 			}
-
-			const data: HealthResponse = await response.json();
-			setStatus(`Backend status: ${data.status}`);
-		} catch {
-			setStatus("Unable to connect. Check that the Python server is running.")
-		} finally {
-			setChecking(false);
 		}
-	}
+
+		loadTasks();
+
+		return () => {
+			ignoreResult = true;
+		};
+	}, []);
 
 	function handleTaskCreated(task: TaskOut) {
 		// Make a new array, unpack all the elements in prev and add task into a new array
-		setTasks((prev) => [...prev, task])
+		setTasks((prev) => [...prev, task]);
 	}
 
-	useEffect(() => {
-		async function loadTasks() {
-			const data = await getTasks()
-			setTasks(data);
+	function handleTaskUpdated(updated: TaskOut) {
+		setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+	}
+
+	function handleTaskDeleted(id: number) {
+		setTasks((prev) => prev.filter((t) => t.id !== id));
+	}
+
+	async function handleGeneratePlan(e: React.SubmitEvent<HTMLFormElement>) {
+		e.preventDefault();
+
+		if (isGenerating) return;
+
+		setPlanError(null);
+		setIsGenerating(true);
+
+		try {
+			const result = await generatePlan(Number(availableMinutesText));
+			setPlan(result);
+		} catch (error) {
+			setPlanError(
+				error instanceof Error ? error.message : "Failed to generate plan",
+			);
+		} finally {
+			setIsGenerating(false);
 		}
+	}
 
-		loadTasks()
-	}, [])
-
-	// Button click
- //    → fetch("/api/health")
- //    → Vite proxy
- //    → FastAPI functions
- //    → JSON response
- //    → React updates the displayed status
 	return (
-		<main>
-			<h1>Lock IN</h1>
-			<p>My next study session, planned.</p>
+		<main className="app-shell">
+			<header className="app-header">
+				<h1>Lock IN</h1>
+				<p>My next study session, planned.</p>
+			</header>
 
-			<button onClick={checkBackend} disabled={checking}>
-				{checking ? "Checking..." : "Check backend"}
-			</button>
+			<div className="dashboard">
+				<section className="panel" aria-labelledby="tasks-heading">
+					<h2 id="tasks-heading">Your tasks</h2>
 
-			<p role="status">{status}</p>
+					{isLoadingTasks ? (
+						<p role="status">Loading tasks...</p>
+					) : tasksError ? (
+						<p className="form-error" role="alert">
+							{tasksError} Reload the page to try again.
+						</p>
+					) : (
+						<>
+							<TaskForm onTaskCreated={handleTaskCreated} />
+							<TaskList
+								tasks={tasks}
+								onTaskUpdated={handleTaskUpdated}
+								onTaskDeleted={handleTaskDeleted}
+							/>
+						</>
+					)}
+				</section>
 
-			<TaskList tasks={tasks}></TaskList>
-			<TaskForm onTaskCreated={handleTaskCreated}/>
+				<section className="panel" aria-labelledby="session-heading">
+					<h2 id="session-heading">Plan your session</h2>
+
+					<form className="session-form" onSubmit={handleGeneratePlan}>
+						<label className="field">
+							<span>Available minutes</span>
+							<input
+								className="input"
+								required
+								disabled={isGenerating}
+								type="number"
+								min={1}
+								step={1}
+								value={availableMinutesText}
+								onChange={(e) => setAvailableMinutesText(e.target.value)}
+							/>
+						</label>
+
+						{planError && (
+							<p className="form-error" role="alert">
+								{planError}
+							</p>
+						)}
+
+						<button
+							className="button button--primary"
+							type="submit"
+							disabled={isGenerating}
+						>
+							Generate plan
+						</button>
+					</form>
+
+					{plan && <PlanView blocks={plan.study_blocks} />}
+				</section>
+			</div>
 		</main>
-	)
+	);
 }

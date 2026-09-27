@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { TaskCreate, TaskOut } from "../types/models";
 import { createTask } from "../api/client";
+import type { TaskCreate, TaskOut } from "../types/models";
 
 interface TaskFormProps {
 	onTaskCreated: (task: TaskOut) => void;
@@ -9,61 +9,118 @@ interface TaskFormProps {
 export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 	const [title, setTitle] = useState("");
 	const [due, setDue] = useState("");
-	const [remaining, setRemaining] = useState(0);
-	const [confidence, setConfidence] = useState(3);
+	const [remainingText, setRemainingText] = useState("30");
+	const [confidenceText, setConfidenceText] = useState("3");
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 
-		const newTask: TaskCreate = {
-			title,
-			due,
-			remaining,
-			confidence,
+		if (isSubmitting) return;
+
+		setSubmitError(null);
+
+		const trimmedTitle = title.trim();
+		if (!trimmedTitle) {
+			setSubmitError("Enter a task title.");
+			return;
 		}
 
-		const created = await createTask(newTask);
-		onTaskCreated(created);
+		setIsSubmitting(true);
 
-		setTitle("");
-		setDue("");
-		setRemaining(0);
-		setConfidence(3);
+		try {
+			const newTask: TaskCreate = {
+				title: trimmedTitle,
+				due,
+				remaining: Number(remainingText),
+				confidence: Number(confidenceText),
+			};
+
+			const created = await createTask(newTask);
+			onTaskCreated(created);
+
+			setTitle("");
+			setDue("");
+			setRemainingText("30");
+			setConfidenceText("3");
+		} catch (error) {
+			setSubmitError(
+				error instanceof Error ? error.message : "Failed to add task",
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<input
-				value={title}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-				placeholder="Task Title"
-			/>
+		<form className="task-form" onSubmit={handleSubmit}>
+			<label className="field">
+				<span>Task title</span>
+				<input
+					className="input"
+					required
+					disabled={isSubmitting}
+					value={title}
+					onChange={(e) => setTitle(e.target.value)}
+					placeholder="e.g. Read chapter 4"
+				/>
+			</label>
 
-			<input
-				type="date"
-				value={due}
-				// Provides ISO format already
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDue(e.target.value)}
-			/>
+			<label className="field">
+				<span>Due date</span>
+				<input
+					className="input"
+					required
+					disabled={isSubmitting}
+					type="date"
+					value={due}
+					onChange={(e) => setDue(e.target.value)}
+				/>
+			</label>
 
-			<input
-				type="number"
-				min={0}
-				value={remaining}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRemaining(Number(e.target.value))}
-				placeholder="Minutes Remaining"
-			/>
+			<label className="field">
+				<span>Minutes remaining</span>
+				<input
+					className="input"
+					required
+					disabled={isSubmitting}
+					type="number"
+					min={0}
+					step={1}
+					value={remainingText}
+					onChange={(e) => setRemainingText(e.target.value)}
+				/>
+			</label>
 
-			<input
-				type="number"
-				min={1}
-				max={5}
-				value={confidence}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfidence(Number(e.target.value))}
-				placeholder="Confidence (1-5)"
-			/>
+			<label className="field">
+				<span>Confidence (1-5)</span>
+				<input
+					className="input"
+					required
+					disabled={isSubmitting}
+					type="number"
+					min={1}
+					max={5}
+					value={confidenceText}
+					onChange={(e) => setConfidenceText(e.target.value)}
+				/>
+			</label>
 
-			<button type="submit">Add Task</button>
+			{submitError && (
+				<p className="form-error" role="alert">
+					{submitError}
+				</p>
+			)}
+
+			<button
+				className="button button--primary"
+				type="submit"
+				disabled={isSubmitting}
+			>
+				{isSubmitting ? "Adding..." : "Add Task"}
+			</button>
 		</form>
-	)
+	);
 }

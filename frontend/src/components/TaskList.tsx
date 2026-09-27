@@ -1,29 +1,32 @@
 import type { TaskOut } from "../types/models";
+import TaskCard from "./TaskCard";
 
 interface TaskListProps {
-	tasks: TaskOut[]
+	tasks: TaskOut[];
+	onTaskUpdated: (task: TaskOut) => void;
+	onTaskDeleted: (id: number) => void;
 }
 
-export default function TaskList({ tasks }: TaskListProps) {
-
-	{/*<ul>
-		{tasks.map((task) => (
-			<li key={task.id}>
-				{task.title} -- due {task.due} -- {task.remaining} min left -- confidence {task.confidence}
-			</li>
-			))}
-	</ul>*/}
+export default function TaskList({
+	tasks,
+	onTaskUpdated,
+	onTaskDeleted,
+}: TaskListProps) {
+	if (tasks.length === 0) {
+		return <p>No tasks yet. Add one above to get started.</p>;
+	}
 
 	return (
-		<div className="task-list">
+		// biome-ignore lint/a11y/noRedundantRoles: keeping here in case of Safari not exposing list to assistive technology
+		<ul className="task-list" role="list">
 			{tasks.map((task) => (
-				<div key={task.id} className="task-card">
-					<h3>{task.title}</h3>
-					<p>Due: {task.due}</p>
-					<p>Remaining: {task.remaining}</p>
-					<p>Confidence: {task.confidence}/5</p>
-				</div>
+				<TaskCard
+					key={task.id}
+					task={task}
+					onTaskUpdated={onTaskUpdated}
+					onTaskDeleted={onTaskDeleted}
+				/>
 			))}
-		</div>
-	)
+		</ul>
+	);
 }

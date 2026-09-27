@@ -1,4 +1,9 @@
-import type { PlanResponse, TaskCreate, TaskOut, TaskUpdate } from "../types/models";
+import type {
+	PlanResponse,
+	TaskCreate,
+	TaskOut,
+	TaskUpdate,
+} from "../types/models";
 
 // Function will never return normally, always throws
 async function throwForBadResponse(response: Response): Promise<never> {
@@ -6,7 +11,10 @@ async function throwForBadResponse(response: Response): Promise<never> {
 
 	try {
 		const body = await response.json();
-		detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+		detail =
+			typeof body.detail === "string"
+				? body.detail
+				: JSON.stringify(body.detail);
 	} catch {
 		detail = response.statusText;
 	}
@@ -36,7 +44,10 @@ export async function createTask(task: TaskCreate): Promise<TaskOut> {
 	return (await response.json()) as TaskOut;
 }
 
-export async function updateTask(id: number, update: TaskUpdate): Promise<TaskOut> {
+export async function updateTask(
+	id: number,
+	update: TaskUpdate,
+): Promise<TaskOut> {
 	const response = await fetch(`/api/tasks/${id}`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
@@ -50,7 +61,9 @@ export async function updateTask(id: number, update: TaskUpdate): Promise<TaskOu
 	return (await response.json()) as TaskOut;
 }
 
-export async function generatePlan(availableMinutes: number): Promise<PlanResponse> {
+export async function generatePlan(
+	availableMinutes: number,
+): Promise<PlanResponse> {
 	const response = await fetch("/api/plan", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -62,4 +75,14 @@ export async function generatePlan(availableMinutes: number): Promise<PlanRespon
 	}
 
 	return (await response.json()) as PlanResponse;
+}
+
+export async function deleteTask(id: number): Promise<void> {
+	const response = await fetch(`/api/tasks/${id}`, {
+		method: "DELETE",
+	});
+
+	if (!response.ok) {
+		await throwForBadResponse(response);
+	}
 }
