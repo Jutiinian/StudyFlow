@@ -1,9 +1,11 @@
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { generatePlan, getTasks } from "./api/client";
+import MotionButton from "./components/MotionButton";
 import PlanView from "./components/PlanView";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
+import { useMeasuredHeight } from "./hooks/useMeasuredHeight";
 import type { PlanResponse, TaskOut } from "./types/models";
 import "./App.css";
 
@@ -20,6 +22,7 @@ export default function App() {
 	const planVersion = useRef(0);
 
 	const shouldReduceMotion = useReducedMotion();
+	const { ref: resultsRef, height: resultsHeight } = useMeasuredHeight();
 
 	useEffect(() => {
 		let ignoreResult = false;
@@ -157,36 +160,69 @@ export default function App() {
 							</p>
 						)}
 
-						<motion.button
+						<MotionButton
 							className="button button--primary"
 							type="submit"
 							disabled={isGenerating}
-							whileTap={
-								shouldReduceMotion || isGenerating ? undefined : { scale: 0.98 }
-							}
-							transition={{ type: "spring", stiffness: 400, damping: 15 }}
 						>
 							{isGenerating ? "Generating..." : "Generate plan"}
-						</motion.button>
+						</MotionButton>
 					</form>
 
-					{plan && (
-						<>
-							<p className="plan-summary">
-								{plan.study_minutes} min study · {plan.break_minutes} min breaks
-								{" · "}
-								{plan.total_minutes} min total
-							</p>
+					<motion.div
+						initial={false}
+						animate={{ height: resultsHeight ?? "auto" }}
+						transition={{
+							duration: shouldReduceMotion ? 0 : 0.25,
+							ease: "easeOut",
+						}}
+						style={{ overflow: "hidden" }}
+					>
+						<div
+							ref={resultsRef}
+							style={{ display: "flow-root" }}
+							aria-busy={isGenerating}
+						>
+							<AnimatePresence initial={false} mode="wait">
+								{isGenerating ? (
+									<motion.p
+										key="loading"
+										role="status"
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
+									>
+										Building your study session…
+									</motion.p>
+								) : plan ? (
+									<motion.div
+										key="results"
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
+										style={{ display: "flow-root" }}
+									>
+										<p className="plan-summary">
+											{plan.study_minutes} min study · {plan.break_minutes} min
+											breaks
+											{" · "}
+											{plan.total_minutes} min total
+										</p>
 
-							{plan.unused_minutes > 0 && (
-								<p className="plan-unused">
-									{plan.unused_minutes} minutes left unscheduled.
-								</p>
-							)}
+										{plan.unused_minutes > 0 && (
+											<p className="plan-unused">
+												{plan.unused_minutes} minutes left unscheduled.
+											</p>
+										)}
 
-							<PlanView blocks={plan.blocks} />
-						</>
-					)}
+										<PlanView blocks={plan.blocks} />
+									</motion.div>
+								) : null}
+							</AnimatePresence>
+						</div>
+					</motion.div>
 				</section>
 			</div>
 		</main>

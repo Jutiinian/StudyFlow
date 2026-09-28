@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createTask } from "../api/client";
 import type { TaskCreate, TaskOut } from "../types/models";
+import MotionButton from "./MotionButton";
 
 interface TaskFormProps {
 	onTaskCreated: (task: TaskOut) => void;
@@ -114,13 +115,13 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 				</p>
 			)}
 
-			<button
+			<MotionButton
 				className="button button--primary"
 				type="submit"
 				disabled={isSubmitting}
 			>
 				{isSubmitting ? "Adding..." : "Add Task"}
-			</button>
+			</MotionButton>
 		</form>
 	);
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { deleteTask, updateTask } from "../api/client";
 import type { TaskOut } from "../types/models";
+import MotionButton from "./MotionButton";
 
 interface TaskEditFormProps {
 	task: TaskOut;
@@ -104,31 +105,31 @@ export default function TaskEditForm({
 			)}
 
 			<div className="task-card__actions">
-				<button
+				<MotionButton
 					className="button button--primary"
 					type="submit"
 					disabled={isBusy}
 				>
 					{pendingAction === "save" ? "Saving..." : "Save"}
-				</button>
+				</MotionButton>
 
-				<button
+				<MotionButton
 					className="button button--secondary"
 					type="button"
 					onClick={onCancel}
 					disabled={isBusy}
 				>
 					Cancel
-				</button>
+				</MotionButton>
 
-				<button
+				<MotionButton
 					className="button button--secondary"
 					type="button"
 					onClick={handleDelete}
 					disabled={isBusy}
 				>
 					{pendingAction === "delete" ? "Deleting..." : "Delete"}
-				</button>
+				</MotionButton>
 			</div>
 		</form>
 	);
