@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import type { BlockOut } from "../types/models";
 
 interface PlanViewProps {
@@ -5,6 +6,8 @@ interface PlanViewProps {
 }
 
 export default function PlanView({ blocks }: PlanViewProps) {
+	const shouldReduceMotion = useReducedMotion();
+
 	if (blocks.length === 0) {
 		return (
 			<p className="plan-empty">
@@ -15,19 +18,29 @@ export default function PlanView({ blocks }: PlanViewProps) {
 
 	return (
 		<ol className="plan-view">
-			{blocks.map((block) => (
-				<li
+			{blocks.map((block, index) => (
+				<motion.li
 					key={block.id}
 					className={
 						block.kind === "break"
 							? "plan-block plan-block--break"
 							: "plan-block"
 					}
+					initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{
+						type: "spring",
+						// duration: shouldReduceMotion ? 0 : 0.3,
+						stiffness: 400,
+						damping: 25,
+						ease: "easeOut",
+						delay: shouldReduceMotion ? 0 : Math.min(index * 0.04, 0.2),
+					}}
 				>
 					<h3>{block.title}</h3>
 					<p className="plan-block__duration">{block.minutes} minutes</p>
 					<p className="plan-block__reason">{block.explanation}</p>
-				</li>
+				</motion.li>
 			))}
 		</ol>
 	);
