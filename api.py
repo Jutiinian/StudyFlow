@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -35,6 +36,7 @@ class PlanRequest(BaseModel):
 
 # Same as StudyBlock dataclass
 class BlockOut(BaseModel):
+	id: str
 	title: str
 	minutes: int
 	explanation: str
@@ -53,6 +55,7 @@ def task_db_to_task(task_db: tuple) -> Task:
 
 def study_block_to_block_out(block: StudyBlock) -> BlockOut:
     return BlockOut(
+    	id=str(uuid4()),
         title=block.title,
         minutes=block.minutes,
         explanation=block.explanation,

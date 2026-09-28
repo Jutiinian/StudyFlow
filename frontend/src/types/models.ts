@@ -19,6 +19,7 @@ export interface TaskUpdate {
 }
 
 export interface BlockOut {
+	id: string;
 	title: string;
 	minutes: number;
 	explanation: string;
