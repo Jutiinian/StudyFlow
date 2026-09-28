@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { generatePlan, getTasks } from "./api/client";
 import PlanView from "./components/PlanView";
 import TaskForm from "./components/TaskForm";
@@ -15,6 +15,8 @@ export default function App() {
 	const [plan, setPlan] = useState<PlanResponse | null>(null);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [planError, setPlanError] = useState<string | null>(null);
+
+	const planVersion = useRef(0);
 
 	useEffect(() => {
 		let ignoreResult = false;
@@ -46,16 +48,25 @@ export default function App() {
 		};
 	}, []);
 
+	function invalidatePlan() {
+		planVersion.current += 1;
+		setPlan(null);
+		setPlanError(null);
+	}
+
 	function handleTaskCreated(task: TaskOut) {
+		invalidatePlan();
 		// Make a new array, unpack all the elements in prev and add task into a new array
 		setTasks((prev) => [...prev, task]);
 	}
 
 	function handleTaskUpdated(updated: TaskOut) {
+		invalidatePlan();
 		setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
 	}
 
 	function handleTaskDeleted(id: number) {
+		invalidatePlan();
 		setTasks((prev) => prev.filter((t) => t.id !== id));
 	}
 
@@ -68,13 +79,19 @@ export default function App() {
 		setPlan(null);
 		setIsGenerating(true);
 
+		const requestVersion = planVersion.current;
+
 		try {
 			const result = await generatePlan(Number(availableMinutesText));
-			setPlan(result);
+			if (requestVersion === planVersion.current) {
+				setPlan(result);
+			}
 		} catch (error) {
-			setPlanError(
-				error instanceof Error ? error.message : "Failed to generate plan",
-			);
+			if (requestVersion === planVersion.current) {
+				setPlanError(
+					error instanceof Error ? error.message : "Failed to generate plan",
+				);
+			}
 		} finally {
 			setIsGenerating(false);
 		}
@@ -123,7 +140,10 @@ export default function App() {
 								min={1}
 								step={1}
 								value={availableMinutesText}
-								onChange={(e) => setAvailableMinutesText(e.target.value)}
+								onChange={(e) => {
+									setAvailableMinutesText(e.target.value);
+									invalidatePlan();
+								}}
 							/>
 						</label>
 

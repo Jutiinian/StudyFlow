@@ -195,3 +195,48 @@ textarea {
 	flex-wrap: wrap;
 	gap: 0.5rem;
 }
+
+.plan-view {
+	display: grid;
+	gap: 1rem;
+	margin: 1.5rem 0 0;
+	padding-inline-start: 1.5rem;
+}
+
+.plan-block {
+	padding: 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: 0.75rem;
+	background-color: var(--color-background);
+}
+
+.plan-block h3,
+.plan-block p {
+	margin: 0;
+}
+
+.plan-block h3 {
+	font-size: 1rem;
+	overflow-wrap: anywhere;
+}
+
+.plan-block p {
+	margin-block-start: 0.5rem;
+}
+
+.plan-block__duration {
+	font-weight: 600;
+}
+
+.plan-block__reason {
+	overflow-wrap: anywhere;
+}
+
+.plan-empty {
+	margin-block-start: 1.5rem;
+}
+
+.plan-block__reason,
+.plan-empty {
+	color: var(--color-text-muted);
+}
