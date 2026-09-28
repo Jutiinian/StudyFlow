@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { generatePlan, getTasks } from "./api/client";
 import PlanView from "./components/PlanView";
@@ -17,6 +18,8 @@ export default function App() {
 	const [planError, setPlanError] = useState<string | null>(null);
 
 	const planVersion = useRef(0);
+
+	const shouldReduceMotion = useReducedMotion();
 
 	useEffect(() => {
 		let ignoreResult = false;
@@ -154,13 +157,17 @@ export default function App() {
 							</p>
 						)}
 
-						<button
+						<motion.button
 							className="button button--primary"
 							type="submit"
 							disabled={isGenerating}
+							whileTap={
+								shouldReduceMotion || isGenerating ? undefined : { scale: 0.98 }
+							}
+							transition={{ type: "spring", stiffness: 400, damping: 15 }}
 						>
 							{isGenerating ? "Generating..." : "Generate plan"}
-						</button>
+						</motion.button>
 					</form>
 
 					{plan && (
