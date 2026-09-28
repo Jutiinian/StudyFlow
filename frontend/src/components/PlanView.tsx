@@ -5,18 +5,23 @@ interface PlanViewProps {
 }
 
 export default function PlanView({ blocks }: PlanViewProps) {
+	if (blocks.length === 0) {
+		return (
+			<p className="plan-empty">
+				No study blocks to schedule. Add a task with time remaining.
+			</p>
+		);
+	}
+
 	return (
-		<div className="plan-view">
-			{blocks.map((block) => {
-				const key = `${block.title}-${block.minutes}-${block.explanation}`;
-				return (
-					<div key={key} className="plan-block">
-						<h4>{block.title}</h4>
-						<p>{block.minutes} minutes</p>
-						<p>{block.explanation}</p>
-					</div>
-				);
-			})}
-		</div>
+		<ol className="plan-view">
+			{blocks.map((block) => (
+				<li key={block.id} className="plan-block">
+					<h3>{block.title}</h3>
+					<p className="plan-block__duration">{block.minutes} minutes</p>
+					<p className="plan-block__reason">{block.explanation}</p>
+				</li>
+			))}
+		</ol>
 	);
 }

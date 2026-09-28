@@ -65,6 +65,7 @@ export default function App() {
 		if (isGenerating) return;
 
 		setPlanError(null);
+		setPlan(null);
 		setIsGenerating(true);
 
 		try {
@@ -137,7 +138,7 @@ export default function App() {
 							type="submit"
 							disabled={isGenerating}
 						>
-							Generate plan
+							{isGenerating ? "Generating..." : "Generate plan"}
 						</button>
 					</form>
 
