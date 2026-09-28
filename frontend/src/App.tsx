@@ -131,13 +131,14 @@ export default function App() {
 
 					<form className="session-form" onSubmit={handleGeneratePlan}>
 						<label className="field">
-							<span>Available minutes</span>
+							<span>Session length, including breaks</span>
 							<input
 								className="input"
 								required
 								disabled={isGenerating}
 								type="number"
 								min={1}
+								max={1440}
 								step={1}
 								value={availableMinutesText}
 								onChange={(e) => {
@@ -162,7 +163,23 @@ export default function App() {
 						</button>
 					</form>
 
-					{plan && <PlanView blocks={plan.study_blocks} />}
+					{plan && (
+						<>
+							<p className="plan-summary">
+								{plan.study_minutes} min study · {plan.break_minutes} min breaks
+								{" · "}
+								{plan.total_minutes} min total
+							</p>
+
+							{plan.unused_minutes > 0 && (
+								<p className="plan-unused">
+									{plan.unused_minutes} minutes left unscheduled.
+								</p>
+							)}
+
+							<PlanView blocks={plan.blocks} />
+						</>
+					)}
 				</section>
 			</div>
 		</main>

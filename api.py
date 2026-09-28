@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
 from datetime import date
+from typing import Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from db import create_task, delete_task, get_all_tasks, init_db, update_task
-from planner import StudyBlock, Task, allocate_plan
+from planner import ScheduleBlock, Task, allocate_plan
 
 
 @asynccontextmanager
@@ -32,8 +33,9 @@ class PlanRequest(BaseModel):
     available_minutes: int = Field(strict=True, ge=1, le=1440)
 
 
-# Same as StudyBlock dataclass
 class BlockOut(BaseModel):
+    kind: Literal["study", "break"]
+    task_id: int | None
     id: str
     title: str
     minutes: int
@@ -41,7 +43,11 @@ class BlockOut(BaseModel):
 
 
 class PlanResponse(BaseModel):
-    study_blocks: list[BlockOut]
+    blocks: list[BlockOut]
+    study_minutes: int
+    break_minutes: int
+    total_minutes: int
+    unused_minutes: int
 
 
 def task_db_to_task(task_db: tuple) -> Task:
@@ -54,9 +60,11 @@ def task_db_to_task(task_db: tuple) -> Task:
     )
 
 
-def study_block_to_block_out(block: StudyBlock) -> BlockOut:
+def block_to_block_out(block: ScheduleBlock) -> BlockOut:
     return BlockOut(
         id=str(uuid4()),
+        kind=block.kind,
+        task_id=block.task_id,
         title=block.title,
         minutes=block.minutes,
         explanation=block.explanation,
@@ -68,17 +76,29 @@ def create_plan(request: PlanRequest) -> PlanResponse:
     today_date = date.today()
 
     tasks: list[Task] = [task_db_to_task(t) for t in get_all_tasks()]
-    blocks: list[StudyBlock] = allocate_plan(
+    blocks: list[ScheduleBlock] = allocate_plan(
         tasks, today_date, request.available_minutes
     )
-    blocks_out: list[BlockOut] = [study_block_to_block_out(b) for b in blocks]
+    blocks_out: list[BlockOut] = [block_to_block_out(block) for block in blocks]
 
-    return PlanResponse(study_blocks=blocks_out)
+    study_minutes = sum(block.minutes for block in blocks if block.kind == "study")
+    break_minutes = sum(block.minutes for block in blocks if block.kind == "break")
+    total_minutes = study_minutes + break_minutes
+
+    return PlanResponse(
+        blocks=blocks_out,
+        study_minutes=study_minutes,
+        break_minutes=break_minutes,
+        total_minutes=total_minutes,
+        unused_minutes=request.available_minutes - total_minutes,
+    )
 
 
 # --- TASK CRUD models ---
 class TaskCreate(BaseModel):
-    title: str
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    title: str = Field(min_length=1, max_length=200)
     due: date
     remaining: int = Field(strict=True, ge=0)
     confidence: int = Field(strict=True, ge=1, le=5)

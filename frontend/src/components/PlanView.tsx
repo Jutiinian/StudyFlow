@@ -16,7 +16,14 @@ export default function PlanView({ blocks }: PlanViewProps) {
 	return (
 		<ol className="plan-view">
 			{blocks.map((block) => (
-				<li key={block.id} className="plan-block">
+				<li
+					key={block.id}
+					className={
+						block.kind === "break"
+							? "plan-block plan-block--break"
+							: "plan-block"
+					}
+				>
 					<h3>{block.title}</h3>
 					<p className="plan-block__duration">{block.minutes} minutes</p>
 					<p className="plan-block__reason">{block.explanation}</p>
