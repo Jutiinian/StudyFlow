@@ -5,8 +5,8 @@ export default function App() {
 	return (
 		<main className={styles.shell}>
 			<header className={styles.header}>
-				<h1>Lock IN</h1>
-				<p>My next study session, planned.</p>
+				<h1>StudyFlow</h1>
+				<p>The next study session, planned.</p>
 			</header>
 			<DashboardPage />
 		</main>

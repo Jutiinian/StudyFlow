@@ -1,4 +1,4 @@
-# LockIn
+# StudyFlow
 
 LockIn is a study planner that organizes tasks into Pomodoro-based study sessions with scheduled breaks. I built it to give my studying more structure and make it easier to focus on what to work on next.
 
