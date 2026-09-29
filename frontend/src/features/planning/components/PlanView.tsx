@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
-import type { BlockOut } from "../types/models";
+import type { BlockOut } from "../types";
+import styles from "./PlanView.module.css";
 
 interface PlanViewProps {
 	blocks: BlockOut[];
@@ -10,21 +11,21 @@ export default function PlanView({ blocks }: PlanViewProps) {
 
 	if (blocks.length === 0) {
 		return (
-			<p className="plan-empty">
+			<p className={styles.empty}>
 				No study blocks to schedule. Add a task with time remaining.
 			</p>
 		);
 	}
 
 	return (
-		<ol className="plan-view">
+		<ol className={styles.list}>
 			{blocks.map((block, index) => (
 				<motion.li
 					key={block.id}
 					className={
 						block.kind === "break"
-							? "plan-block plan-block--break"
-							: "plan-block"
+							? `${styles.block} ${styles.breakBlock}`
+							: styles.block
 					}
 					initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -36,8 +37,8 @@ export default function PlanView({ blocks }: PlanViewProps) {
 					}}
 				>
 					<h3>{block.title}</h3>
-					<p className="plan-block__duration">{block.minutes} minutes</p>
-					<p className="plan-block__reason">{block.explanation}</p>
+					<p className={styles.duration}>{block.minutes} minutes</p>
+					<p className={styles.reason}>{block.explanation}</p>
 				</motion.li>
 			))}
 		</ol>

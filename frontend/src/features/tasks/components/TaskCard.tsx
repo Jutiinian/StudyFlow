@@ -1,8 +1,9 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
-import { useMeasuredHeight } from "../hooks/useMeasuredHeight";
-import type { TaskOut } from "../types/models";
-import MotionButton from "./MotionButton";
+import { useMeasuredHeight } from "../../../shared/hooks/useMeasuredHeight";
+import MotionButton from "../../../shared/ui/MotionButton";
+import type { TaskOut } from "../types";
+import styles from "./TaskCard.module.css";
 import TaskEditForm from "./TaskEditForm";
 
 interface TaskCardProps {
@@ -26,13 +27,22 @@ export default function TaskCard({
 
 	return (
 		<motion.li
-			initial={shouldReduceMotion ? false : { opacity: 0, height: 0, y: 8, paddingBottom: 0 }}
+			initial={
+				shouldReduceMotion
+					? false
+					: { opacity: 0, height: 0, y: 8, paddingBottom: 0 }
+			}
 			animate={{ opacity: 1, height: "auto", y: 0, paddingBottom: 12 }}
-			exit={{ opacity: 0, height: 0, y: shouldReduceMotion ? 0 : -4, paddingBottom: 0 }}
+			exit={{
+				opacity: 0,
+				height: 0,
+				y: shouldReduceMotion ? 0 : -4,
+				paddingBottom: 0,
+			}}
 			transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
 			style={{ overflow: "hidden" }}
 		>
-			<div className="task-card">
+			<div className={styles.card}>
 				<motion.div
 					initial={false}
 					animate={{ height: height ?? "auto" }}
@@ -42,14 +52,14 @@ export default function TaskCard({
 							: { type: "spring", stiffness: 800, damping: 45 }
 					}
 				>
-					<div ref={ref} className="task-card__content">
-						<h3>{task.title}</h3>
-						<p>Due: {task.due}</p>
+					<div ref={ref} className={styles.content}>
+						<h3 className={styles.title}>{task.title}</h3>
+						<p className={styles.meta}>Due: {task.due}</p>
 
 						<AnimatePresence initial={false} mode="wait">
 							<motion.div
 								key={isEditing ? "edit" : "view"}
-								className="task-card__body"
+								className={styles.body}
 								initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -4 }}
@@ -67,11 +77,16 @@ export default function TaskCard({
 									/>
 								) : (
 									<>
-										<p>Remaining: {task.remaining} min</p>
-										<p>Confidence: {task.confidence}/5</p>
+										<p className={styles.meta}>
+											Remaining: {task.remaining} min
+										</p>
+										<p className={styles.meta}>
+											Confidence: {task.confidence}/5
+										</p>
 
 										<MotionButton
-											className="button button--secondary task-card__edit"
+											variant="secondary"
+											className={styles.edit}
 											type="button"
 											onClick={startEditing}
 										>

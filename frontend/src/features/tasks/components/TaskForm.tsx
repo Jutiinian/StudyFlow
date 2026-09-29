@@ -1,13 +1,18 @@
-import { useState } from "react";
-import { createTask } from "../api/client";
-import type { TaskCreate, TaskOut } from "../types/models";
-import MotionButton from "./MotionButton";
+import { useId, useState } from "react";
+import Field from "../../../shared/ui/Field";
+import FormError from "../../../shared/ui/FormError";
+import Input from "../../../shared/ui/Input";
+import MotionButton from "../../../shared/ui/MotionButton";
+import { createTask } from "../api";
+import type { TaskCreate, TaskOut } from "../types";
+import styles from "./TaskForm.module.css";
 
 interface TaskFormProps {
 	onTaskCreated: (task: TaskOut) => void;
 }
 
 export default function TaskForm({ onTaskCreated }: TaskFormProps) {
+	const fieldId = useId();
 	const [title, setTitle] = useState("");
 	const [due, setDue] = useState("");
 	const [remainingText, setRemainingText] = useState("30");
@@ -56,35 +61,35 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 	}
 
 	return (
-		<form className="task-form" onSubmit={handleSubmit}>
-			<label className="field">
+		<form className={styles.form} onSubmit={handleSubmit}>
+			<Field htmlFor={`${fieldId}-title`}>
 				<span>Task title</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-title`}
 					required
 					disabled={isSubmitting}
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
 					placeholder="e.g. Read chapter 4"
 				/>
-			</label>
+			</Field>
 
-			<label className="field">
+			<Field htmlFor={`${fieldId}-due`}>
 				<span>Due date</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-due`}
 					required
 					disabled={isSubmitting}
 					type="date"
 					value={due}
 					onChange={(e) => setDue(e.target.value)}
 				/>
-			</label>
+			</Field>
 
-			<label className="field">
+			<Field htmlFor={`${fieldId}-remaining`}>
 				<span>Minutes remaining</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-remaining`}
 					required
 					disabled={isSubmitting}
 					type="number"
@@ -93,12 +98,12 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 					value={remainingText}
 					onChange={(e) => setRemainingText(e.target.value)}
 				/>
-			</label>
+			</Field>
 
-			<label className="field">
+			<Field htmlFor={`${fieldId}-confidence`}>
 				<span>Confidence (1-5)</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-confidence`}
 					required
 					disabled={isSubmitting}
 					type="number"
@@ -107,19 +112,11 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 					value={confidenceText}
 					onChange={(e) => setConfidenceText(e.target.value)}
 				/>
-			</label>
+			</Field>
 
-			{submitError && (
-				<p className="form-error" role="alert">
-					{submitError}
-				</p>
-			)}
+			{submitError && <FormError>{submitError}</FormError>}
 
-			<MotionButton
-				className="button button--primary"
-				type="submit"
-				disabled={isSubmitting}
-			>
+			<MotionButton variant="primary" type="submit" disabled={isSubmitting}>
 				{isSubmitting ? "Adding..." : "Add Task"}
 			</MotionButton>
 		</form>

@@ -1,15 +1,25 @@
 import { type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
+import styles from "./MotionButton.module.css";
+
+type MotionButtonProps = HTMLMotionProps<"button"> & {
+	variant?: "primary" | "secondary";
+};
 
 export default function MotionButton({
 	children,
+	className,
+	variant = "primary",
 	disabled,
 	...props
-}: HTMLMotionProps<"button">) {
+}: MotionButtonProps) {
 	const shouldReduceMotion = useReducedMotion();
 
 	return (
 		<motion.button
 			{...props}
+			className={[styles.button, styles[variant], className]
+				.filter(Boolean)
+				.join(" ")}
 			disabled={disabled}
 			whileHover={
 				disabled ? undefined : { backgroundColor: "var(--button-hover)" }

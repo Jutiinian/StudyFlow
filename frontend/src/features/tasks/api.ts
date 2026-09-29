@@ -1,26 +1,5 @@
-import type {
-	PlanResponse,
-	TaskCreate,
-	TaskOut,
-	TaskUpdate,
-} from "../types/models";
-
-// Function will never return normally, always throws
-async function throwForBadResponse(response: Response): Promise<never> {
-	let detail: string;
-
-	try {
-		const body = await response.json();
-		detail =
-			typeof body.detail === "string"
-				? body.detail
-				: JSON.stringify(body.detail);
-	} catch {
-		detail = response.statusText;
-	}
-
-	throw new Error(`Request failed (${response.status}): ${detail}`);
-}
+import type { TaskCreate, TaskOut, TaskUpdate } from "./types";
+import { throwForBadResponse } from "../../shared/api/http";
 
 export async function getTasks(): Promise<TaskOut[]> {
 	const response = await fetch("/api/tasks");
@@ -59,22 +38,6 @@ export async function updateTask(
 	}
 
 	return (await response.json()) as TaskOut;
-}
-
-export async function generatePlan(
-	availableMinutes: number,
-): Promise<PlanResponse> {
-	const response = await fetch("/api/plan", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ available_minutes: availableMinutes }),
-	});
-
-	if (!response.ok) {
-		await throwForBadResponse(response);
-	}
-
-	return (await response.json()) as PlanResponse;
 }
 
 export async function deleteTask(id: number): Promise<void> {

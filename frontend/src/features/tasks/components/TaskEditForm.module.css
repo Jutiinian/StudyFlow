@@ -1,0 +1,14 @@
+.form {
+	display: grid;
+	gap: 1rem;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.error {
+	margin: 0;
+}

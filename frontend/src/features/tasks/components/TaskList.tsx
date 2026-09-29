@@ -1,6 +1,7 @@
 import { AnimatePresence } from "motion/react";
-import type { TaskOut } from "../types/models";
+import type { TaskOut } from "../types";
 import TaskCard from "./TaskCard";
+import styles from "./TaskList.module.css";
 
 interface TaskListProps {
 	tasks: TaskOut[];
@@ -17,7 +18,7 @@ export default function TaskList({
 		<>
 			{tasks.length === 0 && <p>No tasks yet. Add one above to get started.</p>}
 			{/* biome-ignore lint/a11y/noRedundantRoles: keeping here in case of Safari not exposing list to assistive technology */}
-			<ul className="task-list" role="list">
+			<ul className={styles.list} role="list">
 				<AnimatePresence initial={false}>
 					{tasks.map((task) => (
 						<TaskCard

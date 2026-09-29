@@ -1,7 +1,11 @@
-import { useState } from "react";
-import { deleteTask, updateTask } from "../api/client";
-import type { TaskOut } from "../types/models";
-import MotionButton from "./MotionButton";
+import { useId, useState } from "react";
+import Field from "../../../shared/ui/Field";
+import FormError from "../../../shared/ui/FormError";
+import Input from "../../../shared/ui/Input";
+import MotionButton from "../../../shared/ui/MotionButton";
+import { deleteTask, updateTask } from "../api";
+import type { TaskOut } from "../types";
+import styles from "./TaskEditForm.module.css";
 
 interface TaskEditFormProps {
 	task: TaskOut;
@@ -16,6 +20,7 @@ export default function TaskEditForm({
 	onDeleted,
 	onCancel,
 }: TaskEditFormProps) {
+	const fieldId = useId();
 	const [remainingText, setRemainingText] = useState(String(task.remaining));
 	const [confidenceText, setConfidenceText] = useState(String(task.confidence));
 
@@ -68,11 +73,11 @@ export default function TaskEditForm({
 	}
 
 	return (
-		<form className="task-card__form" onSubmit={handleSave}>
-			<label className="field">
+		<form className={styles.form} onSubmit={handleSave}>
+			<Field htmlFor={`${fieldId}-remaining`}>
 				<span>Minutes remaining</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-remaining`}
 					required
 					disabled={isBusy}
 					type="number"
@@ -81,12 +86,12 @@ export default function TaskEditForm({
 					value={remainingText}
 					onChange={(e) => setRemainingText(e.target.value)}
 				/>
-			</label>
+			</Field>
 
-			<label className="field">
+			<Field htmlFor={`${fieldId}-confidence`}>
 				<span>Confidence (1-5)</span>
-				<input
-					className="input"
+				<Input
+					id={`${fieldId}-confidence`}
 					required
 					disabled={isBusy}
 					type="number"
@@ -96,25 +101,19 @@ export default function TaskEditForm({
 					value={confidenceText}
 					onChange={(e) => setConfidenceText(e.target.value)}
 				/>
-			</label>
+			</Field>
 
 			{actionError && (
-				<p className="form-error" role="alert">
-					{actionError}
-				</p>
+				<FormError className={styles.error}>{actionError}</FormError>
 			)}
 
-			<div className="task-card__actions">
-				<MotionButton
-					className="button button--primary"
-					type="submit"
-					disabled={isBusy}
-				>
+			<div className={styles.actions}>
+				<MotionButton variant="primary" type="submit" disabled={isBusy}>
 					{pendingAction === "save" ? "Saving..." : "Save"}
 				</MotionButton>
 
 				<MotionButton
-					className="button button--secondary"
+					variant="secondary"
 					type="button"
 					onClick={onCancel}
 					disabled={isBusy}
@@ -123,7 +122,7 @@ export default function TaskEditForm({
 				</MotionButton>
 
 				<MotionButton
-					className="button button--secondary"
+					variant="secondary"
 					type="button"
 					onClick={handleDelete}
 					disabled={isBusy}
