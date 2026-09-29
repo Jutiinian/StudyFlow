@@ -1,6 +1,6 @@
 # StudyFlow
 
-LockIn is a study planner that organizes tasks into Pomodoro-based study sessions with scheduled breaks. I built it to give my studying more structure and make it easier to focus on what to work on next.
+StudyFlow is a study planner that organizes tasks into Pomodoro-based study sessions with scheduled breaks. I built it to give my studying more structure and make it easier to focus on what to work on next.
 
  <!--Add a Preview section with a screenshot or demo GIF here!!! -->
 
@@ -42,7 +42,7 @@ The frontend organizes task management and planning into separate features, with
 
 The idea came while I was working on math homework. I wanted to try the Pomodoro technique to help me focus, but I also kept losing track of what I needed to do next. Having my tasks and a study plan in one place seemed like something I would find useful.
 
-I also wanted more practice with Python and TypeScript. Most of my programming experience is with Lua/Luau through Roblox, and I learn best by building things. LockIn gave me a chance to use those languages in a full-stack web application.
+I also wanted more practice with Python and TypeScript. Most of my programming experience is with Lua/Luau through Roblox, and I learn best by building things. StudyFlow gave me a chance to use those languages in a full-stack web application.
 
 ## What I Learned
 
