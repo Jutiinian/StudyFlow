@@ -1,5 +1,5 @@
-import type { TaskCreate, TaskOut, TaskUpdate } from "./types";
 import { throwForBadResponse } from "../../shared/api/http";
+import type { TaskCreate, TaskOut, TaskUpdate } from "./types";
 
 export async function getTasks(): Promise<TaskOut[]> {
 	const response = await fetch("/api/tasks");
