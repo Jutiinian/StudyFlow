@@ -4,6 +4,8 @@ import type { TaskOut } from "../types";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 
+import styles from "./TasksPanel.module.css";
+
 interface TasksPanelProps {
 	tasks: TaskOut[];
 	isLoadingTasks: boolean;
@@ -23,7 +25,19 @@ export default function TasksPanel({
 }: TasksPanelProps) {
 	return (
 		<Panel aria-labelledby="tasks-heading">
-			<h2 id="tasks-heading">Your tasks</h2>
+			<div className={styles.heading}>
+				<div>
+					<p className={styles.kicker}>01 / The backlog</p>
+					<h2 id="tasks-heading" className={styles.title}>
+						Your tasks
+					</h2>
+				</div>
+				{!isLoadingTasks && !tasksError && (
+					<span className={styles.count}>
+						{tasks.length} {tasks.length === 1 ? "task" : "tasks"}
+					</span>
+				)}
+			</div>
 			{isLoadingTasks ? (
 				<p role="status">Loading tasks...</p>
 			) : tasksError ? (
