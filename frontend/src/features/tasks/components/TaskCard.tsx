@@ -54,7 +54,9 @@ export default function TaskCard({
 				>
 					<div ref={ref} className={styles.content}>
 						<h3 className={styles.title}>{task.title}</h3>
-						<p className={styles.meta}>Due: {task.due}</p>
+						<p className={styles.due}>
+							Due <time dateTime={task.due}>{task.due}</time>
+						</p>
 
 						<AnimatePresence initial={false} mode="wait">
 							<motion.div
@@ -77,12 +79,22 @@ export default function TaskCard({
 									/>
 								) : (
 									<>
-										<p className={styles.meta}>
-											Remaining: {task.remaining} min
-										</p>
-										<p className={styles.meta}>
-											Confidence: {task.confidence}/5
-										</p>
+										<div className={styles.stats}>
+											<p className={styles.time}>
+												<strong>{task.remaining}</strong> min remaining
+											</p>
+											<div className={styles.confidence}>
+												<span>Confidence {task.confidence}/5</span>
+												<span className={styles.segments} aria-hidden="true">
+													{[1, 2, 3, 4, 5].map((level) => (
+														<span
+															key={level}
+															className={`${styles.segment} ${level <= task.confidence ? styles.filled : ""}`}
+														/>
+													))}
+												</span>
+											</div>
+										</div>
 
 										<MotionButton
 											variant="secondary"
