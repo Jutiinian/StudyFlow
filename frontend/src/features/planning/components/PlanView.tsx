@@ -36,6 +36,9 @@ export default function PlanView({ blocks }: PlanViewProps) {
 						delay: shouldReduceMotion ? 0 : Math.min(index * 0.04, 0.2),
 					}}
 				>
+					<span className={styles.marker} aria-hidden="true">
+						{block.kind === "break" ? "Ⅱ" : String(index + 1).padStart(2, "0")}
+					</span>
 					<h3>{block.title}</h3>
 					<p className={styles.duration}>{block.minutes} minutes</p>
 					<p className={styles.reason}>{block.explanation}</p>
