@@ -1,16 +1,10 @@
 .card {
-	padding: 1rem;
-	border: 1px solid var(--color-border);
-	border-radius: 0.75rem;
-	background-color: var(--color-background);
-	overflow: hidden;
+	position: relative;
+	isolation: isolate;
+	padding: 1.25rem 1.4rem;
 }
 
-.content {
-	display: grid;
-	gap: 0.5rem;
-}
-
+.content,
 .body {
 	display: grid;
 	gap: 0.5rem;
@@ -22,14 +16,93 @@
 }
 
 .title {
-	font-size: 1.125rem;
+	font-size: 1.25rem;
+	font-weight: 900;
 	overflow-wrap: anywhere;
 }
 
 .meta {
-	margin: 0;
+	color: var(--color-text-muted);
+	font-size: 1rem;
+	line-height: 1.65;
 }
 
 .edit {
 	justify-self: start;
+	margin: 0.35rem 0 0.25rem;
+}
+
+.card:focus-within {
+	border-left-color: #000000;
+}
+
+.card::before,
+.card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: #000000;
+	clip-path: polygon(0 3%, 96% 0, 100% 12%, 98% 93%, 88% 100%, 0 96%);
+}
+
+.card::after {
+	inset: 3px 3px 3px 7px;
+	background: #ffffff;
+}
+
+.card:focus-within::before {
+	background: #d32f2f;
+}
+
+.metaLabel {
+	display: inline-block;
+	margin-right: 0.4rem;
+	font-weight: 900;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+}
+.title {
+	width: fit-content;
+	max-width: 100%;
+	padding: 0.2rem 0.5rem;
+	background: #000000;
+	color: #ffffff;
+}
+.card:hover::before {
+	background: #d32f2f;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.card:hover::before,
+	.card:focus-within::before {
+		animation: edge-strike 0.22s ease-out;
+	}
+}
+@keyframes edge-strike {
+	40% {
+		translate: -3px 2px;
+	}
+	100% {
+		translate: 0 0;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.title {
+		animation: ui-cut-in 0.22s 0.03s var(--motion-snap) backwards;
+	}
+	.meta {
+		animation: ui-cut-in 0.24s 0.06s var(--motion-snap) backwards;
+	}
+	.body > .meta:nth-child(2) {
+		animation-delay: 0.1s;
+	}
+	.metaLabel {
+		transition: translate 0.12s var(--motion-snap);
+	}
+	.card:hover .metaLabel,
+	.card:focus-within .metaLabel {
+		translate: 2px 0;
+	}
 }

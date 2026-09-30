@@ -27,12 +27,14 @@ export default function PlanView({ blocks }: PlanViewProps) {
 							? `${styles.block} ${styles.breakBlock}`
 							: styles.block
 					}
-					initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-					animate={{ opacity: 1, y: 0 }}
+					initial={
+						shouldReduceMotion ? false : { opacity: 0, x: 35, rotate: 2 }
+					}
+					animate={{ opacity: 1, x: 0, rotate: 0 }}
 					transition={{
-						type: "spring",
-						stiffness: 400,
-						damping: 25,
+						type: "tween",
+						duration: shouldReduceMotion ? 0 : 0.24,
+						ease: "easeOut",
 						delay: shouldReduceMotion ? 0 : Math.min(index * 0.04, 0.2),
 					}}
 				>

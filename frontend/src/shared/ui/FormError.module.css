@@ -2,3 +2,9 @@
 	color: var(--color-error);
 	overflow-wrap: anywhere;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+	.error {
+		animation: ui-alert-hit 0.26s var(--motion-snap) both;
+	}
+}

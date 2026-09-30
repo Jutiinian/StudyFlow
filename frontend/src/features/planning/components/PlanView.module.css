@@ -1,15 +1,31 @@
 .list {
-	display: grid;
-	gap: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
 	margin: 1.5rem 0 0;
-	padding-inline-start: 1.5rem;
+	padding: 0;
+	list-style: none;
+	counter-reset: block;
 }
 
 .block {
-	padding: 1rem;
-	border: 1px solid var(--color-border);
-	border-radius: 0.75rem;
-	background-color: var(--color-background);
+	position: relative;
+	counter-increment: block;
+	padding: 1.2rem 1.4rem 1.2rem 3rem;
+	clip-path: polygon(2% 0, 100% 3%, 97% 90%, 91% 100%, 0 96%);
+	border: 2px solid var(--color-border);
+	background: #000000;
+	color: #ffffff;
+}
+
+.block::before {
+	content: counter(block, decimal-leading-zero);
+	position: absolute;
+	top: 0.7rem;
+	left: 0.6rem;
+	color: #ffffff;
+	font-family: var(--font-display);
+	font-size: 1.5rem;
 }
 
 .block h3,
@@ -18,32 +34,72 @@
 }
 
 .block h3 {
-	font-size: 1rem;
+	font-size: 1.2rem;
 	overflow-wrap: anywhere;
 }
 
 .block p {
-	margin-block-start: 0.5rem;
+	margin-top: 0.5rem;
 }
 
 .duration {
-	font-weight: 600;
+	font-weight: 800;
+	font-size: 0.95rem;
+	text-transform: uppercase;
 }
 
 .reason {
+	color: #ffffff;
+	font-size: 1rem;
+	line-height: 1.65;
 	overflow-wrap: anywhere;
 }
 
 .empty {
-	margin-block-start: 1.5rem;
-}
-
-.reason,
-.empty {
+	margin-top: 1.5rem;
 	color: var(--color-text-muted);
 }
 
 .breakBlock {
-	background-color: var(--color-surface);
+	background: #ffffff;
+	color: #000000;
 	border-style: dashed;
+}
+
+.breakBlock::before {
+	color: var(--color-accent);
+}
+
+.breakBlock .reason {
+	color: var(--color-text-muted);
+}
+
+.block:nth-child(even) {
+	margin-left: 0.8rem;
+}
+
+.block:nth-child(odd) {
+	margin-right: 0.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.block h3 {
+		animation: ui-cut-in 0.24s 0.06s var(--motion-snap) backwards;
+	}
+	.duration {
+		animation: ui-pop-in 0.24s 0.1s var(--motion-snap) backwards;
+		transform-origin: left;
+	}
+	.reason {
+		animation: ui-cut-in 0.28s 0.14s var(--motion-snap) backwards;
+	}
+	.block::before {
+		transition: translate 0.12s var(--motion-snap);
+	}
+	.block:hover::before {
+		translate: 2px -2px;
+	}
+	.empty {
+		animation: ui-cut-in 0.24s var(--motion-snap) backwards;
+	}
 }

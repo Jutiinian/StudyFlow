@@ -16,7 +16,13 @@ export default function TaskList({
 }: TaskListProps) {
 	return (
 		<>
-			{tasks.length === 0 && <p>No tasks yet. Add one above to get started.</p>}
+			{tasks.length === 0 && (
+				<p className={styles.empty}>
+					<strong>Your next move starts here.</strong>
+					<br />
+					Add a task above to put it on the board.
+				</p>
+			)}
 			{/* biome-ignore lint/a11y/noRedundantRoles: keeping here in case of Safari not exposing list to assistive technology */}
 			<ul className={styles.list} role="list">
 				<AnimatePresence initial={false}>

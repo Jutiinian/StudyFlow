@@ -1,0 +1,90 @@
+.caption {
+	margin: 0 0 0.7rem;
+	font-weight: 900;
+	font-size: 0.9rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.composer {
+	border: 3px solid #000000;
+	margin-top: 2rem;
+}
+
+.composer summary {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.7rem 1rem;
+	background: #000000;
+	color: #ffffff;
+	font-weight: 900;
+	font-size: 1rem;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.composer summary span {
+	font-size: 1.3rem;
+}
+
+.composer[open] summary span {
+	transform: rotate(45deg);
+}
+
+.composer summary:focus-visible {
+	outline: 3px dashed #d32f2f;
+	outline-offset: 4px;
+}
+
+.formBody {
+	padding: 1.2rem;
+}
+
+.boardHeading {
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	margin: 2rem 0 0;
+	font-family: var(--font-display);
+	text-transform: uppercase;
+	font-size: 1.5rem;
+}
+
+.boardHeading span {
+	padding: 0.1rem 0.5rem;
+	background: #d32f2f;
+	color: #ffffff;
+	transform: rotate(-7deg);
+}
+
+@media (max-width: 35rem) {
+	.formBody {
+		padding: 0.9rem;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.composer {
+		animation: ui-cut-in 0.3s 0.08s var(--motion-snap) backwards;
+	}
+	.composer summary {
+		transition: padding-inline 0.12s var(--motion-snap);
+	}
+	.composer summary:hover {
+		padding-inline: 1.2rem 0.8rem;
+	}
+	.composer summary span {
+		transition: transform 0.18s var(--motion-snap);
+	}
+	.composer[open] .formBody {
+		animation: ui-cut-in 0.25s var(--motion-snap) backwards;
+	}
+	.boardHeading span {
+		animation: ui-pop-in 0.24s var(--motion-snap) both;
+	}
+	.caption {
+		animation: ui-cut-in 0.22s var(--motion-snap) backwards;
+	}
+}

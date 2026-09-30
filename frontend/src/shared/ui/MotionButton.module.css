@@ -1,31 +1,127 @@
 .button {
-	min-height: 2.75rem;
-	padding: 0.625rem 1rem;
-	border: 1px solid transparent;
-	border-radius: 0.5rem;
-	font-weight: 600;
+	position: relative;
+	isolation: isolate;
+	min-height: 3.2rem;
+	padding: 0.8rem 1.5rem;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	color: #ffffff;
+	font-weight: 900;
+	font-size: 0.95rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 	cursor: pointer;
 }
 
-.button:focus-visible {
-	outline: 2px solid var(--color-accent);
-	outline-offset: 2px;
+.button::before,
+.button::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	clip-path: polygon(6% 0, 100% 5%, 93% 100%, 0 90%);
 }
 
-.button:disabled {
-	opacity: 0.65;
-	cursor: not-allowed;
+.button::before {
+	background: #000000;
+	transform: translate(4px, 4px);
 }
 
-.primary {
-	--button-hover: var(--color-accent-hover);
-	background-color: var(--color-accent);
+.button::after {
+	background: var(--button-fill);
+}
+
+.button:not(:disabled):hover::after {
+	background: #000000;
+}
+
+.button:not(:disabled):hover {
 	color: #ffffff;
 }
 
+.button:focus-visible {
+	outline: 3px dashed #000000;
+	outline-offset: 6px;
+}
+
+.button:disabled {
+	cursor: not-allowed;
+	color: #000000;
+	--button-fill: #ffffff;
+	outline: 2px dashed #000000;
+	outline-offset: -4px;
+}
+
+.primary {
+	--button-fill: #d32f2f;
+}
+
 .secondary {
-	--button-hover: var(--color-border);
-	background-color: var(--color-surface);
-	color: var(--color-text);
-	border-color: var(--color-input-border);
+	--button-fill: #ffffff;
+	color: #000000;
+}
+
+.secondary::after {
+	inset: 2px;
+}
+
+.spark {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.spark::before,
+.spark::after {
+	content: "";
+	position: absolute;
+	width: 0.7rem;
+	height: 1.2rem;
+	background: #d32f2f;
+	clip-path: polygon(0 0, 100% 35%, 15% 100%);
+	opacity: 0;
+}
+.spark::before {
+	top: 0;
+	right: 0.3rem;
+}
+.spark::after {
+	bottom: 0;
+	left: 0.3rem;
+	rotate: 180deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.button:not(:disabled):is(:hover, :focus-visible) .spark::before {
+		animation: spark-out 0.3s ease-out both;
+	}
+	.button:not(:disabled):is(:hover, :focus-visible) .spark::after {
+		animation: spark-back 0.3s 0.03s ease-out both;
+	}
+}
+@keyframes spark-out {
+	15% {
+		opacity: 1;
+	}
+	70% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		translate: 12px -12px;
+		rotate: 35deg;
+	}
+}
+@keyframes spark-back {
+	15% {
+		opacity: 1;
+	}
+	70% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		translate: -12px 12px;
+		rotate: 215deg;
+	}
 }

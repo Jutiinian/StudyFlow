@@ -1,12 +1,444 @@
 .dashboard {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: 1.5rem;
-	align-items: start;
+	display: flex;
+	align-items: flex-start;
+	gap: clamp(2rem, 4vw, 5rem);
+	padding: 2rem 0 4rem;
 }
 
-@media (min-width: 50rem) {
+.command {
+	position: relative;
+	isolation: isolate;
+	flex: 0 0 32%;
+	min-width: 0;
+	padding: 1rem 0;
+}
+
+.kicker {
+	width: fit-content;
+	margin: 0 0 1.25rem;
+	padding: 0.2rem 0.6rem;
+	background: #ffffff;
+	border: 3px solid #000000;
+	font-size: 0.9rem;
+	font-weight: 900;
+	transform: rotate(-4deg);
+}
+
+.headline {
+	margin: 0 0 2.5rem;
+	font-family: var(--font-display);
+	font-size: clamp(4rem, 7.6vw, 8rem);
+	font-weight: 900;
+	line-height: 0.82;
+	letter-spacing: -0.04em;
+	transform: rotate(-5deg) skewX(-10deg);
+}
+
+.headline > span:not(.mark) {
+	color: #ffffff;
+	-webkit-text-stroke: 2px #000000;
+	text-shadow: 5px 5px 0 #000000;
+}
+
+.mark {
+	color: #ffffff;
+}
+
+.menu {
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+}
+
+.menu button {
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	width: 100%;
+	min-height: 3.6rem;
+	padding: 0.5rem 0.8rem;
+	border: 3px solid #000000;
+	background: #000000;
+	color: #ffffff;
+	font-family: var(--font-display);
+	font-size: clamp(1.2rem, 2vw, 1.85rem);
+	text-align: left;
+	cursor: pointer;
+	transform: skewX(-10deg) rotate(-3deg);
+}
+
+.menu button:nth-child(2) {
+	width: 94%;
+	margin-left: 3%;
+	transform: skewX(-10deg) rotate(2deg);
+}
+
+.menu button span {
+	font:
+		900 0.85rem Arial,
+		sans-serif;
+}
+
+.menu button b {
+	margin-left: auto;
+}
+
+.menu button[aria-pressed="true"] {
+	background: #ffffff;
+	color: #000000;
+	box-shadow: 6px 6px 0 #000000;
+}
+
+.menu button:focus-visible {
+	outline: 3px dashed #ffffff;
+	outline-offset: 7px;
+}
+
+.menu button:hover {
+	background: #ffffff;
+	color: #000000;
+}
+
+.hint {
+	margin: 1.8rem 0;
+	font-size: 1rem;
+	line-height: 1.6;
+	font-weight: 800;
+}
+
+.stats {
+	display: flex;
+	gap: 1.5rem;
+	border-top: 4px solid #000000;
+	padding-top: 0.8rem;
+}
+
+.stats p {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+}
+
+.stats strong {
+	font-family: var(--font-display);
+	font-size: 2.7rem;
+	line-height: 1.1;
+}
+
+.stats span {
+	font-size: 0.85rem;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+
+.burst {
+	position: absolute;
+	top: 0;
+	right: -1rem;
+	z-index: -1;
+	color: #ffffff;
+	font-size: 10rem;
+	line-height: 1;
+	transform: rotate(18deg);
+}
+
+.stage {
+	--entry-x: 2rem;
+	--entry-y: 2.5rem;
+	--settle-x: -0.15rem;
+	--settle-y: -0.2rem;
+	--entry-tilt: 1.5deg;
+	--slash-start: -115%;
+	--slash-end: 115%;
+	position: relative;
+	isolation: isolate;
+	flex: 1;
+	min-width: 0;
+	margin-top: 3rem;
+}
+
+/* Returning to tasks reverses the diagonal travel, including the slash layers. */
+.stage[data-view="tasks"] {
+	--entry-x: -2rem;
+	--entry-y: -2.5rem;
+	--settle-x: 0.15rem;
+	--settle-y: 0.2rem;
+	--entry-tilt: -1.5deg;
+	--slash-start: 115%;
+	--slash-end: -115%;
+}
+
+.stageLabel {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.6rem 1rem;
+	margin: 0 0.5rem 0.7rem;
+	background: #000000;
+	color: #ffffff;
+	font-size: 0.85rem;
+	font-weight: 900;
+	letter-spacing: 0.035em;
+	transform: rotate(2deg);
+}
+
+.workspace > section {
+	min-height: 32rem;
+}
+
+.cut {
+	display: none;
+}
+
+@media (min-width: 80rem) {
+	.command {
+		position: sticky;
+		top: 2rem;
+	}
+}
+
+@media (max-width: 55rem) {
 	.dashboard {
-		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		flex-direction: column;
+		gap: 1rem;
+		padding-top: 1rem;
+	}
+	.command {
+		width: 100%;
+	}
+	.headline {
+		font-size: clamp(3.5rem, 12vw, 6rem);
+		margin-bottom: 2rem;
+	}
+	.headline br {
+		display: none;
+	}
+	.headline > span:not(.mark) {
+		margin-inline: 0.12em;
+	}
+	.menu {
+		flex-direction: row;
+		gap: 1rem;
+	}
+	.menu button,
+	.menu button:nth-child(2) {
+		flex: 1;
+		width: auto;
+		margin: 0;
+		font-size: clamp(1rem, 3vw, 1.6rem);
+	}
+	.stats {
+		max-width: 28rem;
+	}
+	.burst {
+		top: auto;
+		bottom: 0;
+		right: 0.5rem;
+		font-size: 7rem;
+	}
+	.stage {
+		width: 100%;
+		margin-top: 0;
+	}
+}
+
+@media (max-width: 25rem) {
+	.menu {
+		flex-direction: column;
+	}
+	.headline {
+		font-size: 3rem;
+	}
+	.stageLabel > span:last-child {
+		display: none;
+	}
+	.burst {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.command {
+		animation: command-enter 0.22s 0.1s backwards;
+	}
+	.menu button:hover {
+		translate: 6px -3px;
+	}
+	.workspace:not([hidden]) {
+		transform-origin: 50% 25%;
+		animation: workspace-enter 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+	}
+	.stageLabel {
+		animation: label-enter 0.3s 0.045s cubic-bezier(0.16, 1, 0.3, 1) both;
+	}
+	.workspace:not([hidden]) > section > h2 {
+		animation: label-enter 0.28s 0.09s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+	}
+	.cut {
+		display: block;
+		position: absolute;
+		inset: -1rem;
+		z-index: 3;
+		pointer-events: none;
+		overflow: clip;
+		/* Keep the travelling sheets inside the stage, avoiding page overflow. */
+		animation: cut-finish 0.4s step-end forwards;
+	}
+	.cut::before,
+	.cut::after {
+		content: "";
+		position: absolute;
+		inset: -20%;
+		clip-path: polygon(0 22%, 78% 0, 100% 78%, 22% 100%);
+		animation: diagonal-slash 0.34s cubic-bezier(0.65, 0, 0.3, 1) both;
+	}
+	.cut::before {
+		background: #ffffff;
+		border: 12px solid #d32f2f;
+	}
+	.cut::after {
+		background: #000000;
+		animation-delay: 0.035s;
+	}
+}
+
+@keyframes command-enter {
+	from {
+		translate: -5rem 0;
+		opacity: 0;
+	}
+	to {
+		translate: 0 0;
+		opacity: 1;
+	}
+}
+
+@keyframes workspace-enter {
+	0% {
+		translate: var(--entry-x) var(--entry-y);
+		rotate: var(--entry-tilt);
+		scale: 0.975;
+		opacity: 0;
+	}
+	35% {
+		opacity: 1;
+	}
+	78% {
+		translate: var(--settle-x) var(--settle-y);
+		rotate: 0deg;
+		scale: 1;
+	}
+	100% {
+		translate: 0 0;
+		rotate: 0deg;
+		scale: 1;
+		opacity: 1;
+	}
+}
+
+@keyframes label-enter {
+	from {
+		translate: var(--entry-x) var(--entry-y);
+		opacity: 0;
+	}
+	to {
+		translate: 0 0;
+		opacity: 1;
+	}
+}
+
+@keyframes diagonal-slash {
+	0% {
+		translate: var(--slash-start) var(--slash-start);
+	}
+	45% {
+		translate: 0 0;
+	}
+	100% {
+		translate: var(--slash-end) var(--slash-end);
+	}
+}
+
+@keyframes cut-finish {
+	to {
+		visibility: hidden;
+	}
+}
+
+.hint {
+	position: relative;
+	padding: 0.9rem 1rem;
+	border: 3px solid #000000;
+	background: #ffffff;
+	box-shadow: 4px 4px 0 #000000;
+}
+.hint::before {
+	content: "";
+	position: absolute;
+	top: -0.7rem;
+	left: 1.5rem;
+	width: 1rem;
+	height: 1rem;
+	background: #ffffff;
+	border-top: 3px solid #000000;
+	border-left: 3px solid #000000;
+	transform: skewY(30deg);
+}
+.stageLabel {
+	flex-wrap: wrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.menu button:hover b,
+	.menu button:focus-visible b {
+		animation: arrow-strike 0.35s ease-out both;
+	}
+}
+@keyframes arrow-strike {
+	40% {
+		translate: 5px -5px;
+		rotate: 8deg;
+	}
+	100% {
+		translate: 2px -2px;
+		rotate: 0deg;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.kicker {
+		animation: ui-cut-in 0.24s 0.05s var(--motion-snap) backwards;
+	}
+	.headline {
+		animation: ui-pop-in 0.28s 0.08s var(--motion-snap) backwards;
+		transform-origin: left;
+	}
+	.menu button {
+		animation: ui-cut-in 0.24s 0.12s var(--motion-snap) backwards;
+		transition:
+			box-shadow 0.1s,
+			translate 0.1s var(--motion-snap);
+	}
+	.menu button:nth-child(2) {
+		animation-delay: 0.17s;
+	}
+	.hint {
+		animation: ui-cut-in 0.24s var(--motion-snap) backwards;
+	}
+	.stats {
+		animation: ui-cut-in 0.28s 0.18s var(--motion-snap) backwards;
+	}
+	.stats strong {
+		animation: ui-pop-in 0.3s var(--motion-snap) both;
+		transform-origin: left bottom;
+	}
+	.stats span {
+		animation: ui-cut-in 0.24s 0.06s var(--motion-snap) backwards;
+	}
+	.burst {
+		animation: ui-idle-float 4.5s ease-in-out infinite;
+		animation-play-state: paused;
+	}
+	:global([data-motion="on"]) .burst {
+		animation-play-state: running;
 	}
 }

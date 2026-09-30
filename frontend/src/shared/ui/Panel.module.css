@@ -1,6 +1,72 @@
 .panel {
-	background-color: var(--color-surface);
-	border: 1px solid var(--color-border);
-	border-radius: 1rem;
-	padding: 1.5rem;
+	position: relative;
+	isolation: isolate;
+	min-width: 0;
+	padding: 2.2rem clamp(1.2rem, 3vw, 2.25rem) 2.8rem;
+}
+
+/* Clip only the paper layers: inputs and focus rings stay unobstructed. */
+.panel::before,
+.panel::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	clip-path: polygon(
+		3% 0,
+		96% 1.5%,
+		100% 7%,
+		98% 91%,
+		94% 94%,
+		96% 100%,
+		0 97%,
+		1% 45%
+	);
+}
+
+.panel::before {
+	background: #000000;
+	transform: translate(9px, 10px);
+}
+
+.panel::after {
+	background: #ffffff;
+	border: 4px solid #000000;
+}
+
+.panel h2 {
+	width: fit-content;
+	max-width: 100%;
+	margin: -0.5rem 0 1.9rem -0.4rem;
+	padding: 0.45rem 0.9rem;
+	border: 3px solid #000000;
+	background: #000000;
+	color: #ffffff;
+	font-family: var(--font-display);
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 900;
+	line-height: 1.05;
+	text-transform: uppercase;
+	transform: skewX(-10deg) rotate(-3deg);
+	box-shadow: 6px 5px 0 #d32f2f;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.panel > p,
+	.panel > h3 {
+		animation: ui-cut-in var(--motion-enter) 0.09s var(--motion-snap) backwards;
+	}
+	.panel::before {
+		transition: translate 0.16s var(--motion-snap);
+	}
+	.panel:focus-within::before {
+		translate: 2px -2px;
+	}
+	.panel h2 {
+		transition: box-shadow 0.12s var(--motion-snap);
+	}
+	.panel h2:hover {
+		box-shadow: 9px 7px 0 #d32f2f;
+	}
 }

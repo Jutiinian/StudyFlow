@@ -30,16 +30,17 @@ export default function TaskCard({
 			initial={
 				shouldReduceMotion
 					? false
-					: { opacity: 0, height: 0, y: 8, paddingBottom: 0 }
+					: { opacity: 0, height: 0, x: -65, y: 0, paddingBottom: 0 }
 			}
-			animate={{ opacity: 1, height: "auto", y: 0, paddingBottom: 12 }}
+			animate={{ opacity: 1, height: "auto", x: 0, y: 0, paddingBottom: 12 }}
 			exit={{
 				opacity: 0,
 				height: 0,
-				y: shouldReduceMotion ? 0 : -4,
+				x: shouldReduceMotion ? 0 : 35,
+				y: 0,
 				paddingBottom: 0,
 			}}
-			transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
+			transition={{ duration: shouldReduceMotion ? 0 : 0.14, ease: "easeOut" }}
 			style={{ overflow: "hidden" }}
 		>
 			<div className={styles.card}>
@@ -54,7 +55,9 @@ export default function TaskCard({
 				>
 					<div ref={ref} className={styles.content}>
 						<h3 className={styles.title}>{task.title}</h3>
-						<p className={styles.meta}>Due: {task.due}</p>
+						<p className={styles.meta}>
+							<span className={styles.metaLabel}>Deadline</span> {task.due}
+						</p>
 
 						<AnimatePresence initial={false} mode="wait">
 							<motion.div
@@ -78,10 +81,12 @@ export default function TaskCard({
 								) : (
 									<>
 										<p className={styles.meta}>
-											Remaining: {task.remaining} min
+											<span className={styles.metaLabel}>Time left</span>{" "}
+											{task.remaining} min
 										</p>
 										<p className={styles.meta}>
-											Confidence: {task.confidence}/5
+											<span className={styles.metaLabel}>Confidence</span>{" "}
+											{task.confidence}/5
 										</p>
 
 										<MotionButton

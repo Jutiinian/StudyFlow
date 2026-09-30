@@ -34,11 +34,12 @@ export default function PlanningPanel({ planning }: PlanningPanelProps) {
 
 	return (
 		<Panel aria-labelledby="session-heading">
-			<h2 id="session-heading">Plan your session</h2>
+			<p className={styles.caption}>Turn intention into action</p>
+			<h2 id="session-heading">The game plan ↗</h2>
 
 			<form className={styles.form} onSubmit={handleGeneratePlan}>
 				<Field htmlFor={`${fieldId}-session-length`}>
-					<span>Session length, including breaks</span>
+					<span>Session length · minutes, including breaks</span>
 					<Input
 						id={`${fieldId}-session-length`}
 						required
@@ -78,18 +79,26 @@ export default function PlanningPanel({ planning }: PlanningPanelProps) {
 							<motion.p
 								key="loading"
 								role="status"
+								className={styles.loading}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
 								transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
 							>
-								Building your study session…
+								Plotting your next move…
 							</motion.p>
 						) : plan ? (
 							<motion.div
 								key="results"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
+								initial={
+									shouldReduceMotion
+										? false
+										: { clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)" }
+								}
+								animate={{
+									clipPath: "polygon(0 0, 120% 0, 100% 100%, 0 100%)",
+									opacity: 1,
+								}}
 								exit={{ opacity: 0 }}
 								transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
 								style={{ display: "flow-root" }}
@@ -109,7 +118,20 @@ export default function PlanningPanel({ planning }: PlanningPanelProps) {
 
 								<PlanView blocks={plan.blocks} />
 							</motion.div>
-						) : null}
+						) : (
+							<div className={styles.standby}>
+								<span aria-hidden="true">↗</span>
+								<p>
+									READY WHEN
+									<br />
+									<strong>YOU ARE.</strong>
+								</p>
+								<p>
+									Set your session length above. Generate a plan to put your
+									tasks in motion.
+								</p>
+							</div>
+						)}
 					</AnimatePresence>
 				</div>
 			</motion.div>
