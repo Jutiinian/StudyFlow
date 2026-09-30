@@ -34,7 +34,10 @@ export default function PlanningPanel({ planning }: PlanningPanelProps) {
 
 	return (
 		<Panel aria-labelledby="session-heading">
-			<h2 id="session-heading">Plan your session</h2>
+			<p className={styles.kicker}>02 / Your next move</p>
+			<h2 id="session-heading" className={styles.title}>
+				Plan your session
+			</h2>
 
 			<form className={styles.form} onSubmit={handleGeneratePlan}>
 				<Field htmlFor={`${fieldId}-session-length`}>
@@ -109,7 +112,17 @@ export default function PlanningPanel({ planning }: PlanningPanelProps) {
 
 								<PlanView blocks={plan.blocks} />
 							</motion.div>
-						) : null}
+						) : (
+							<div key="empty" className={styles.empty}>
+								<span className={styles.emptyMark} aria-hidden="true">
+									↗
+								</span>
+								<strong>A little structure. A lot more focus.</strong>
+								<p>
+									Choose your session length and turn your tasks into a plan.
+								</p>
+							</div>
+						)}
 					</AnimatePresence>
 				</div>
 			</motion.div>

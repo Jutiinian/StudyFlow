@@ -1,6 +1,8 @@
 .panel {
-	background-color: var(--color-surface);
-	border: 1px solid var(--color-border);
-	border-radius: 1rem;
-	padding: 1.5rem;
+	min-width: 0;
+	background: var(--color-surface);
+	border: 2px solid var(--color-text);
+	border-radius: 0.75rem;
+	padding: clamp(1rem, 3vw, 1.75rem);
+	box-shadow: 5px 5px 0 var(--color-text);
 }

@@ -13,6 +13,8 @@
 body {
 	margin: 0;
 	background-color: var(--color-background);
+	background-image: radial-gradient(#20212512 0.7px, transparent 0.7px);
+	background-size: 12px 12px;
 }
 
 button,
